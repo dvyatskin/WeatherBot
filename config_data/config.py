@@ -7,8 +7,13 @@ else:
     load_dotenv()
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
-RAPID_API_KEY = os.getenv("RAPID_API_KEY")
+API_KEY = os.getenv("RAPID_API_KEY")
 DEFAULT_COMMANDS = (
     ("start", "Запустить бота"),
-    ("help", "Вывести справку")
+    ("help", "Вывести справку"),
+    ("city", "Выбрать город"),
+    ("low", "Вывод минимальных показателей"),
+    ("high", "Вывод максимальных показателей"),
+    ("custom", "Вывод показателей пользовательского диапазона"),
+    ("history", "Вывод истории запросов пользователей")
 )

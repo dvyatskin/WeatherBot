@@ -1,26 +1,35 @@
 from telebot.types import Message
 
+from keyboards.inline.location import loc_keyboard
 from loader import bot, API
-import requests
-import json
 from states.contact_info import WeatherInfoState
+from utils.state_code import check
 
 
 @bot.message_handler(commands=['city'])
-def choose_city(message: Message) -> None:
+def ask_city_name(message: Message) -> None:
     bot.set_state(message.from_user.id, WeatherInfoState.city, message.chat.id)
-    bot.reply_to(message, 'Выберите город в котором хотите посмотреть погоду')
+    bot.reply_to(message, 'В каком городе хотите посмотреть погоду')
 
 
 @bot.message_handler(state=WeatherInfoState.city)
 def get_weather(message: Message) -> None:
     city_name = message.text.strip()
-    res = requests.get(f'https://api.openweathermap.org/data/2.5/weather?q={city_name}&appid={API}&units=metric')
-    if res.status_code == 200:
-        data = json.loads(res.text)
-        bot.reply_to(message, f'Сейчас погода в городе {city_name}:\n'
-                              f'на улице - {data["weather"][0]["main"]}\n'
-                              f'температура {round(data["main"]["temp"], 1)}, ощущается как {round(data["main"]["feels_like"], 1)}')
+    limit = 3
+    result = check(f'http://api.openweathermap.org/geo/1.0/direct?q={city_name}&limit={limit}&appid={API}')
+    if result:
+        markup = loc_keyboard(result, 'simple')
+        bot.send_message(message.chat.id, f'Выберите город:', reply_markup=markup)
     else:
         bot.reply_to(message, 'Город не найден')
     bot.set_state(message.from_user.id, WeatherInfoState, message.chat.id)
+
+
+@bot.message_handler(state=WeatherInfoState.simple)
+def get_temp(message, data) -> None:
+
+    bot.set_state(message.from_user.id, WeatherInfoState, message.chat.id)
+    bot.send_message(message.chat.id, f'Сейчас погода:'
+                                      f'на улице - {data["list"][0]["weather"][0]["main"]}\n'
+                                      f'температура {round(data["list"][0]["main"]["temp"], 1)}, '
+                                      f'ощущается как {round(data["list"][0]["main"]["feels_like"], 1)}')

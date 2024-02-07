@@ -9,10 +9,11 @@ def loc_keyboard(data, mode):
     if len(data) == 2:
         btn2 = types.InlineKeyboardButton(f'{data[1]["name"]}, {data[1]["country"]}',
                                           callback_data=f'second_{data[1]["lat"]}_{data[1]["lon"]}_{mode}')
-        if len(data) == 3:
-            btn3 = types.InlineKeyboardButton(f'{data[2]["name"]}, {data[2]["country"]}',
-                                              callback_data=f'third_{data[2]["lat"]}_{data[2]["lon"]}_{mode}')
-            markup.row(btn2, btn3)
-        else:
-            markup.row(btn2)
+        markup.row(btn2)
+    elif len(data) == 3:
+        btn2 = types.InlineKeyboardButton(f'{data[1]["name"]}, {data[1]["country"]}',
+                                          callback_data=f'second_{data[1]["lat"]}_{data[1]["lon"]}_{mode}')
+        btn3 = types.InlineKeyboardButton(f'{data[2]["name"]}, {data[2]["country"]}',
+                                          callback_data=f'third_{data[2]["lat"]}_{data[2]["lon"]}_{mode}')
+        markup.row(btn2, btn3)
     return markup

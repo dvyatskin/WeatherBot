@@ -1,9 +1,6 @@
-import os
-import sqlite3
-
 from telebot.types import Message
 
-from database.db_insert import one_insert
+from database.db_in import create_history
 from keyboards.inline.location import loc_keyboard
 from loader import bot, API
 from states.contact_info import WeatherInfoState
@@ -18,11 +15,10 @@ def ask_city_name(message: Message) -> None:
 
 @bot.message_handler(state=WeatherInfoState.low)
 def choose_city(message: Message) -> None:
-    city_name_min = message.text.strip()
+    user_id = message.from_user.id
     command = 'low'
-
-    one_insert(command, city_name_min)
-
+    city_name_min = message.text.strip()
+    create_history(user_id, command, city_name_min)
     limit = 3
     result = check(f'http://api.openweathermap.org/geo/1.0/direct?q={city_name_min}&limit={limit}&appid={API}')
     if result:

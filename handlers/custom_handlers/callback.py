@@ -22,4 +22,4 @@ def callback_message(callback):
         get_temp(callback.message, result)
     elif req[3] == 'custom':
         bot.set_state(callback.message.from_user.id, WeatherInfoState.custom_next, callback.message.chat.id)
-        get_custom_temp(callback.message, result)
+        get_custom_temp(callback.message, result, callback.from_user.id)

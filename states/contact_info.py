@@ -11,4 +11,3 @@ class WeatherInfoState(StatesGroup):
     minimum = State()
     maximum = State()
     simple = State()
-
